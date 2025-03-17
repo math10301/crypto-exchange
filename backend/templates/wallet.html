@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кошелёк - Crypto Exchange</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: #1f1f1f;
+            padding: 10px 0;
+            color: white;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        nav ul li {
+            margin: 0 15px;
+            position: relative;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            flex: 1;
+        }
+        footer {
+            background-color: #1f1f1f;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+            margin-top: auto;
+        }
+        .balance, .wallets, .transactions, .chart, .btn-container {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn-container button {
+            width: 48%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-container button:hover {
+            background-color: #0056b3;
+        }
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .transactions-table th, .transactions-table td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: left;
+        }
+        .transactions-table th {
+            background-color: #444;
+        }
+        .form-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-container form {
+            width: 48%;
+        }
+        .form-container input, .form-container button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+        }
+        .form-container button {
+            background-color: #007bff;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('assetsChart').getContext('2d');
+            const assetsChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            function updateChart(data) {
+                assetsChart.data.labels = data.labels;
+                assetsChart.data.datasets[0].data = data.amounts;
+                assetsChart.update();
+            }
+
+            // Пример данных для обновления графика
+            const exampleData = {
+                labels: ['BTC', 'ETH', 'USDT'],
+                amounts: [1.5, 10, 2000]
+            };
+            updateChart(exampleData);
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="markets.html">Рынки</a></li>
+                <li><a href="p2p.html">P2P</a></li>
+                <li><a href="nft.html">NFT</a></li>
+                <li><a href="wallet.html">Кошелёк</a></li>
+                <li><a href="dashboard.html">Личный Кабинет</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        <section class="balance">
+            <h2>Общий баланс пользователя</h2>
+            <p>Ваш текущий баланс: {{ user.balance }} USDT</p>
+        </section>
+        <section class="wallets">
+            <h2>Ваши кошельки</h2>
+            <ul>
+                {% for wallet in user.wallets %}
+                    <li>{{ wallet.currency }}: {{ wallet.amount }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+        <div class="form-container">
+            <form>
+                <h3>Пополнить</h3>
+                <input type="number" placeholder="Сумма" required>
+                <select required>
+                    <option value="">Выберите валюту</option>
+                    {% for wallet in user.wallets %}
+                        <option value="{{ wallet.currency }}">{{ wallet.currency }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Пополнить</button>
+            </form>
+            <form>
+                <h3>Вывести</h3>
+                <input type="number" placeholder="Сумма" required>
+                <select required>
+                    <option value="">Выберите валюту</option>
+                    {% for wallet in user.wallets %}
+                        <option value="{{ wallet.currency }}">{{ wallet.currency }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Вывести</button>
+            </form>
+        </div>
+        <section class="transactions">
+            <h2>История пополнений и выводов</h2>
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Тип</th>
+                        <th>Сумма</th>
+                        <th>Валюта</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in user.transactions %}
+                        <tr>
+                            <td>{{ transaction.date }}</td>
+                            <td>{{ transaction.type }}</td>
+                            <td>{{ transaction.amount }}</td>
+                            <td>{{ transaction.currency }}</td>
+                            <td>{{ transaction.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <section class="chart">
+            <h2>Распределение активов</h2>
+            <canvas id="assetsChart"></canvas>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Crypto Exchange. Все права защищены.</p>
+    </footer>
+</body>
+</html>

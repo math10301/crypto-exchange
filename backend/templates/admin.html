@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Crypto Exchange</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: #1f1f1f;
+            padding: 10px 0;
+            color: white;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        nav ul li {
+            margin: 0 15px;
+            position: relative;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            flex: 1;
+        }
+        footer {
+            background-color: #1f1f1f;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+            margin-top: auto;
+        }
+        .section {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .section h2 {
+            margin-top: 0;
+        }
+        .section input, .section select, .section button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+        }
+        .section button {
+            background-color: #007bff;
+            cursor: pointer;
+        }
+        .section button:hover {
+            background-color: #0056b3;
+        }
+        .user-list, .currency-list, .transaction-log {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .user-list th, .user-list td, .currency-list th, .currency-list td, .transaction-log th, .transaction-log td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: left;
+        }
+        .user-list th, .currency-list th, .transaction-log th {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="markets.html">Рынки</a></li>
+                <li><a href="p2p.html">P2P</a></li>
+                <li><a href="nft.html">NFT</a></li>
+                <li><a href="wallet.html">Кошелёк</a></li>
+                <li><a href="dashboard.html">Личный Кабинет</a></li>
+                <li><a href="admin.html">Админ-панель</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        <section class="section">
+            <h2>Управление пользователями</h2>
+            <input type="text" placeholder="Поиск по ID пользователя">
+            <button>Поиск</button>
+            <table class="user-list">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя пользователя</th>
+                        <th>Баланс</th>
+                        <th>Почта</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.balance }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <button>Изменить баланс</button>
+                                <button>Удалить аккаунт</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <section class="section">
+            <h2>Управление криптовалютами</h2>
+            <input type="text" placeholder="Название валюты">
+            <input type="number" placeholder="Капитализация">
+            <input type="number" placeholder="Количество монет в обороте">
+            <button>Добавить новую монету</button>
+            <table class="currency-list">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Капитализация</th>
+                        <th>Количество монет</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for currency in currencies %}
+                        <tr>
+                            <td>{{ currency.name }}</td>
+                            <td>{{ currency.capitalization }}</td>
+                            <td>{{ currency.supply }}</td>
+                            <td>
+                                <button>Изменить капитализацию</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <section class="section">
+            <h2>История транзакций</h2>
+            <table class="transaction-log">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Тип</th>
+                        <th>Сумма</th>
+                        <th>Валюта</th>
+                        <th>Пользователь</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.date }}</td>
+                            <td>{{ transaction.type }}</td>
+                            <td>{{ transaction.amount }}</td>
+                            <td>{{ transaction.currency }}</td>
+                            <td>{{ transaction.user }}</td>
+                            <td>{{ transaction.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <section class="section">
+            <h2>Выдача и снятие средств вручную</h2>
+            <form>
+                <input type="text" placeholder="ID пользователя" required>
+                <input type="number" placeholder="Сумма" required>
+                <select required>
+                    <option value="">Выберите валюту</option>
+                    {% for currency in currencies %}
+                        <option value="{{ currency.name }}">{{ currency.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Выдать средства</button>
+                <button type="submit">Снять средства</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Crypto Exchange. Все права защищены.</p>
+    </footer>
+</body>
+</html>

@@ -1,27 +1,36 @@
-from fastapi import FastAPI, Request
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Request, Depends
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from pathlib import Path
-from api.endpoints import router as api_router
-from api.exchange import router as exchange_router
-from api.charts import router as charts_router
-from api.admin import router as admin_router
-from api.integration import router as integration_router
+from sqlalchemy.orm import Session
+from database import get_db
+from routers.auth import router as auth_router
+from routers.trade import router as trade_router
+from routers.wallet import router as wallet_router
+from routers.admin import router as admin_router
+from routers.dashboard import router as dashboard_router
 
-app = FastAPI()
-
-# Гарантируем, что путь к шаблонам правильный
+# Настройки пути к шаблонам
 BASE_DIR = Path(__file__).parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
-app.include_router(api_router, prefix="/api")
-app.include_router(exchange_router, prefix="/api")
-app.include_router(charts_router, prefix="/api")
-app.include_router(admin_router, prefix="/api")
-app.include_router(integration_router, prefix="/api")
+# Инициализация приложения
+app = FastAPI()
 
+# Монтирование статики
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
+
+# Подключение роутов
+app.include_router(auth_router, prefix="/auth")
+app.include_router(trade_router, prefix="/trade")
+app.include_router(wallet_router, prefix="/wallet")
+app.include_router(admin_router, prefix="/admin")
+app.include_router(dashboard_router, prefix="/dashboard")
+
+# Маршрут для главной страницы
 @app.get("/", response_class=HTMLResponse)
-def read_root(request: Request):
+def read_root(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse("index.html", {"request": request, "title": "Crypto Exchange"})
 
 if __name__ == "__main__":

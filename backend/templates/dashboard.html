@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный Кабинет - Crypto Exchange</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: #1f1f1f;
+            padding: 10px 0;
+            color: white;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        nav ul li {
+            margin: 0 15px;
+            position: relative;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            flex: 1;
+        }
+        footer {
+            background-color: #1f1f1f;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+            margin-top: auto;
+        }
+        .balance, .transactions, .account-settings {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .btn-container button {
+            width: 48%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-container button:hover {
+            background-color: #0056b3;
+        }
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .transactions-table th, .transactions-table td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: left;
+        }
+        .transactions-table th {
+            background-color: #444;
+        }
+        .transactions-table .buy {
+            color: #00ff00;
+        }
+        .transactions-table .sell {
+            color: #ff0000;
+        }
+        .transactions-table .deposit {
+            color: #00ffff;
+        }
+        .transactions-table .withdraw {
+            color: #ffff00;
+        }
+        .account-settings form {
+            display: flex;
+            flex-direction: column;
+        }
+        .account-settings input, .account-settings button {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+        }
+        .account-settings button {
+            background-color: #007bff;
+            cursor: pointer;
+        }
+        .account-settings button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="markets.html">Рынки</a></li>
+                <li><a href="p2p.html">P2P</a></li>
+                <li><a href="nft.html">NFT</a></li>
+                <li><a href="wallet.html">Кошелёк</a></li>
+                <li><a href="dashboard.html">Личный Кабинет</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        <section class="balance">
+            <h2>Баланс пользователя</h2>
+            <p>Ваш текущий баланс: {{ user.balance }} BTC</p>
+        </section>
+        <section class="transactions">
+            <h2>История транзакций</h2>
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Тип</th>
+                        <th>Сумма</th>
+                        <th>Валюта</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in user.transactions %}
+                        <tr class="{{ transaction.type }}">
+                            <td>{{ transaction.date }}</td>
+                            <td>{{ transaction.type }}</td>
+                            <td>{{ transaction.amount }}</td>
+                            <td>{{ transaction.currency }}</td>
+                            <td>{{ transaction.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <div class="btn-container">
+            <button>Пополнить</button>
+            <button>Вывести</button>
+        </div>
+        <section class="account-settings">
+            <h2>Настройки аккаунта</h2>
+            <form>
+                <label for="theme">Сменить тему:</label>
+                <select id="theme" name="theme">
+                    <option value="dark">Тёмная</option>
+                    <option value="light">Светлая</option>
+                </select>
+                <label for="password">Сменить пароль:</label>
+                <input type="password" id="password" name="password" placeholder="Новый пароль">
+                <button type="submit">Сохранить изменения</button>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Crypto Exchange. Все права защищены.</p>
+    </footer>
+</body>
+</html>

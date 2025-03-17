@@ -3,17 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Exchange</title>
+    <title>{{ title }}</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        h1 { color: #333; }
-        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: #1f1f1f;
+            padding: 10px 0;
+            color: white;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        nav ul li {
+            margin: 0 15px;
+            position: relative;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav ul li:hover > ul {
+            display: block;
+        }
+        nav ul ul {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #1f1f1f;
+            padding: 10px 0;
+            list-style-type: none;
+            min-width: 150px;
+        }
+        nav ul ul li {
+            padding: 10px;
+            text-align: left;
+        }
+        nav ul ul li a {
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            flex: 1;
+        }
+        .hero {
+            text-align: center;
+            padding: 50px 0;
+            background-color: #007bff;
+            color: white;
+        }
+        .hero h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .hero p {
+            font-size: 1.2em;
+        }
+        .form-container {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+        .market-data {
+            margin: 20px 0;
+        }
+        .market-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .market-table th, .market-table td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: left;
+        }
+        .market-table th {
+            background-color: #333;
+        }
+        .admin-button {
+            background-color: #ff4500;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        footer {
+            background-color: #1f1f1f;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+            margin-top: auto;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Добро пожаловать в Crypto Exchange</h1>
-        <p>Это главная страница криптобиржи.</p>
-    </div>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="markets.html">Рынки</a></li>
+                <li><a href="p2p.html">P2P</a></li>
+                <li><a href="nft.html">NFT</a></li>
+                <li>
+                    <a href="#">Подробнее</a>
+                    <ul>
+                        <li><a href="wallet.html">Кошелёк</a></li>
+                        <li><a href="dashboard.html">Личный Кабинет</a></li>
+                        <li><a href="#">Что-нибудь ещё</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        <section class="hero">
+            <h1>Добро пожаловать в Crypto Exchange</h1>
+            <p>Торгуйте криптовалютами безопасно и удобно.</p>
+            {% if user %}
+                <p>Привет, {{ user.username }}!</p>
+                {% if user.is_admin %}
+                    <button class="admin-button" onclick="location.href='admin.html'">Панель администратора</button>
+                {% endif %}
+            {% else %}
+                <div class="form-container">
+                    <button onclick="location.href='register.html'">Регистрация</button>
+                    <button onclick="location.href='login.html'">Вход</button>
+                </div>
+            {% endif %}
+        </section>
+        <section class="market-data">
+            <h2>Текущие курсы валют</h2>
+            <table class="market-table">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Курс</th>
+                        <th>Изменение за 24 часа</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for currency in market_data %}
+                        <tr>
+                            <td>{{ currency.name }}</td>
+                            <td>{{ currency.price }}</td>
+                            <td>{{ currency.change }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Crypto Exchange. Все права защищены.</p>
+    </footer>
 </body>
 </html>

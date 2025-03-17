@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Торговля - Crypto Exchange</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: #1f1f1f;
+            padding: 10px 0;
+            color: white;
+            text-align: center;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        nav ul li {
+            margin: 0 15px;
+            position: relative;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+            flex: 1;
+        }
+        footer {
+            background-color: #1f1f1f;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            width: 100%;
+            bottom: 0;
+            margin-top: auto;
+        }
+        .balance, .market-table, .trade-form, .chart {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .trade-form input, .trade-form select, .trade-form button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #222;
+            color: #fff;
+        }
+        .trade-form button {
+            background-color: #007bff;
+            cursor: pointer;
+        }
+        .trade-form button:hover {
+            background-color: #0056b3;
+        }
+        .market-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .market-table th, .market-table td {
+            border: 1px solid #555;
+            padding: 10px;
+            text-align: left;
+        }
+        .market-table th {
+            background-color: #444;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            const priceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [], // Даты и времена
+                    datasets: [{
+                        label: 'Цена',
+                        data: [], // Цены
+                        borderColor: '#007bff',
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'minute'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            function updateChart(data) {
+                priceChart.data.labels = data.labels;
+                priceChart.data.datasets[0].data = data.prices;
+                priceChart.update();
+            }
+
+            // Функция для имитации получения данных от API
+            function fetchData() {
+                // Пример данных
+                const data = {
+                    labels: ['2025-03-16T10:00:00Z', '2025-03-16T10:05:00Z', '2025-03-16T10:10:00Z'],
+                    prices: [50000, 50500, 50700]
+                };
+                updateChart(data);
+            }
+
+            // Обновление данных каждые 5 минут
+            setInterval(fetchData, 300000);
+            fetchData();
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="markets.html">Рынки</a></li>
+                <li><a href="p2p.html">P2P</a></li>
+                <li><a href="nft.html">NFT</a></li>
+                <li><a href="wallet.html">Кошелёк</a></li>
+                <li><a href="dashboard.html">Личный Кабинет</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="container">
+        <section class="balance">
+            <h2>Баланс пользователя</h2>
+            <p>Ваш текущий баланс: {{ user.balance }} USDT</p>
+            <h3>Ваши активы</h3>
+            <ul>
+                {% for asset in user.owned_crypto %}
+                    <li>{{ asset.name }}: {{ asset.amount }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+        <section class="market-table">
+            <h2>Текущие курсы валют</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Курс</th>
+                        <th>Изменение за 24 часа</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for currency in market_data %}
+                        <tr>
+                            <td>{{ currency.name }}</td>
+                            <td>{{ currency.price }}</td>
+                            <td>{{ currency.change }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        <section class="trade-form">
+            <h2>Покупка/Продажа</h2>
+            <form>
+                <input type="number" placeholder="Сумма" required>
+                <select required>
+                    <option value="">Выберите валюту</option>
+                    {% for currency in market_data %}
+                        <option value="{{ currency.name }}">{{ currency.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Купить/Продать</button>
+            </form>
+        </section>
+        <section class="chart">
+            <h2>График изменения курса</h2>
+            <canvas id="priceChart"></canvas>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Crypto Exchange. Все права защищены.</p>
+    </footer>
+</body>
+</html>
